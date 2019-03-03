@@ -59,15 +59,15 @@ namespace DownloadGoogleAnalytics
                     _startDate = DateTime.Parse(Settings.read("lastget"));
                 }
                 DateTime _endDate = DateTime.Today.AddDays(-1);
-                Log.Write("Ophalen data van " + _startDate.ToString("yyyy-MM-dd") + " t/m " + _endDate.ToString("yyyy-MM-dd"));
+                Log.Write("Getting data from " + _startDate.ToString("yyyy-MM-dd") + " to " + _endDate.ToString("yyyy-MM-dd"));
                 DateTimeEnumerator dates = new DateTimeEnumerator(_startDate, _endDate);
                 foreach (DateTime date in dates)
                 {
                     GetAnalyticsDataWithDate(date);
                 }
-                Log.Write("Lastget instellen op laatst opgehaalde datum: " + DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"));
+                Log.Write("Setting lastget to last date: " + DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"));
                 Settings.set("lastget", DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"));
-                Log.Write("Klaar :)");
+                Log.Write("Ready :)");
             }
             catch(Exception ex)
             {
@@ -93,10 +93,10 @@ namespace DownloadGoogleAnalytics
                     {
                         ReportRequests = new List<ReportRequest> { reportRequest }
                     };
-                    Log.Write("Aanroep starten");
+                    Log.Write("Starting request");
                     var batchRequest = svc.Reports.BatchGet(getReportsRequest);
                     var response = batchRequest.Execute();
-                    Log.Write("Data verwerken");
+                    Log.Write("Processing data");
                     var Results = new Results();
                     Results.ResultList = new List<Result>();
                     foreach(var x in response.Reports.First().Data.Rows)
@@ -118,7 +118,7 @@ namespace DownloadGoogleAnalytics
             }
             catch (NullReferenceException nex)
             {
-                Log.Write("Geen data opgehaald van de server\r\n" + nex);
+                Log.Write("No data fetched\r\n" + nex);
             }
             catch (Exception ex)
             {
@@ -133,7 +133,7 @@ namespace DownloadGoogleAnalytics
                 string _newfilename = Path.GetFullPath(Settings.read("locationcsv")) + DateTime.Now.ToString("yyyy-MM-ddThhmmss") + ".log";
                 if (File.Exists(Settings.read("locationcsv")))
                 {
-                    Log.Write("CSV bestaat al, inlezen... " + Settings.read("locationcsv"));
+                    Log.Write("CSV already exists, importing existing csv " + Settings.read("locationcsv"));
                     CsvFileDescription inputfileDescription = new CsvFileDescription
                     {
                         SeparatorChar = ',',
@@ -141,25 +141,25 @@ namespace DownloadGoogleAnalytics
                     };
                     CsvContext cc = new CsvContext();
                     IEnumerable<Result> _oldcsv = cc.Read<Result>(Settings.read("locationcsv"), inputfileDescription);
-                    Log.Write("Ingelezen, oude data toevoegen aan nieuwe data");
+                    Log.Write("Existing csv imported, adding old data to new data");
                     foreach (Result _result in _oldcsv)
                     {
                         _results.ResultList.Add(_result);
                     }
-                    Log.Write("Oude csv hernoemen naar " + _newfilename);
+                    Log.Write("Rename old csv to " + _newfilename);
                     File.Copy(Settings.read("locationcsv"), _newfilename);
                 }
 
 
                 string csv = CsvSerializer.SerializeToCsv(_results);
-                Log.Write("CSV opslaan");
+                Log.Write("Writing CSV");
                 System.IO.File.WriteAllText(Settings.read("locationcsv"), csv);
-                Log.Write("Temp csv verwijderen van locatie " + _newfilename);
+                Log.Write("Deleting temporary csv from location " + _newfilename);
                 if (System.IO.File.Exists(_newfilename)) { System.IO.File.Delete(_newfilename); }
             }
             catch (Exception ex)
             {
-                Log.Write("Er ging iets mis met het opslaan van de csv: " + ex);
+                Log.Write("Something went wrong with saving the csv: " + ex);
             }
         }
 
