@@ -20,10 +20,10 @@ namespace DownloadGoogleAnalytics
         {
             try
             {
-                //EncryptDecrypt.Decrypt();
+                //EncryptDecrypt.Decrypt(); <- disabled due to certificate error on certain machine
                 Log.Write("Check for missing settings");
                 Settings.CheckSettings();
-                Log.Write("Starten met analytics data ophalen");
+                Log.Write("Starting getting analytics data");
                 new GoogleApiCall().GetAnalyticsData();
 
             }
