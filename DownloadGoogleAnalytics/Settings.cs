@@ -21,7 +21,7 @@ namespace DownloadGoogleAnalytics
             }
             catch (ConfigurationErrorsException)
             {
-                Log.Write("Probleem met het lezen van de setting " + key);
+                Log.Write("Problem with reading setting " + key);
             }
             return result;
         }
@@ -30,10 +30,10 @@ namespace DownloadGoogleAnalytics
         {
             try
             {
-                //lees de settings in
+                //read settings
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
-                //vraag af of de setting er is, zo niet, dan wordt deze aangemaakt
+                //determine if setting exists or should be added
                 if (settings[_key] == null)
                 {
                     settings.Add(_key, _data);
@@ -42,17 +42,17 @@ namespace DownloadGoogleAnalytics
                 {
                     settings[_key].Value = _data;
                 }
-                //sla de wijzigingen op
+                //save changes
                 configFile.Save(ConfigurationSaveMode.Modified);
-                //ververs de settings
+                //refresh settings
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
-                //schrijf resultaat naar console en log
-                Console.WriteLine(_key + " succesvol toegevoegd");
-                Log.Write(_key + " succesvol gewijzigd");
+                //write results to console and log
+                Console.WriteLine(_key + " successfull added");
+                Log.Write(_key + " successfully edited");
             }
             catch (ConfigurationErrorsException cex)
             {
-                Log.Write("Er ging iets fout met het wijzigen van de instelling " + cex);
+                Log.Write("Somethihng went wrong editing setting " + cex);
             }
         }
 
@@ -61,7 +61,7 @@ namespace DownloadGoogleAnalytics
             string _data;
             if (_key == "clientsecretjson")
             {
-                Console.WriteLine("Geef de locatie op van de client_secret.json:");
+                Console.WriteLine("Enter the location of the client_secret.json file:");
                 string _location = Console.ReadLine();
                 using (StreamReader sr = new StreamReader(_location))
                 {
@@ -70,7 +70,7 @@ namespace DownloadGoogleAnalytics
             }
             else
             {
-                Console.WriteLine("Plak hieronder de instelling voor " + _key);
+                Console.WriteLine("Paste de settings for " + _key);
                 _data = Console.ReadLine();
             }
             set(_key, _data);
@@ -80,12 +80,12 @@ namespace DownloadGoogleAnalytics
         {
             try
             {
-                Console.WriteLine("De setting voor " + type + " is niet aanwezig");
+                Console.WriteLine("The setting for " + type + " does not exist");
                 Settings.setWithQuestion(type);
             }
             catch
             {
-                Log.Write("Er ging iets fout met opslaan van de " + type);
+                Log.Write("Something went wrong with saving " + type);
             }
         }
         public static void SetSetting(string type)
@@ -96,7 +96,7 @@ namespace DownloadGoogleAnalytics
             }
             catch (Exception ex)
             {
-                Log.Write("Er ging iets fout met opslaan van de " + type + "/r/n" + ex);
+                Log.Write("Something went wrong with saving " + type + "/r/n" + ex);
             }
         }
         public static void CheckSettings()
